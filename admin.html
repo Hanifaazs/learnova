@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Learnova</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      /* --- Variabel Global CSS (Warna & Ukuran) --- */
+      :root {
+        --primary: #6c63ff;
+        --primary-dark: #5a52e0;
+        --secondary: #ff6584;
+        --dark: #2a2d3e;
+        --light: #f8f9fa;
+        --gray: #6c757d;
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+        --sidebar-width: 260px;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f0f2f5;
+        color: var(--dark);
+        overflow-x: hidden;
+      }
+
+      /* --- Kustomisasi Scrollbar Browser --- */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
+
+      /* --- Styling Sidebar (Menu Kiri) --- */
+      .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: white;
+        border-right: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 25px 20px;
+        z-index: 1000;
+        transition: var(--transition);
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+        padding: 0 10px;
+      }
+
+      .logo-text {
+        font-family: "Bubblegum Sans", cursive;
+        font-size: 26px;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-left: 12px;
+      }
+
+      .logo-icon {
+        background: var(--gradient);
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+      }
+
+      /* Styling Link Navigasi Sidebar */
+      .nav-link {
+        color: var(--gray);
+        font-weight: 500;
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+      }
+
+      .nav-link i {
+        width: 24px;
+        margin-right: 12px;
+        font-size: 1.1rem;
+        transition: var(--transition);
+      }
+
+      .nav-link:hover {
+        background-color: #f8f9fa;
+        color: var(--primary);
+        transform: translateX(5px);
+      }
+
+      .nav-link.active {
+        background-color: rgba(108, 99, 255, 0.1);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-link.active i {
+        color: var(--primary);
+      }
+
+      /* --- Styling Konten Utama (Kanan) --- */
+      .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 30px;
+        transition: var(--transition);
+        min-height: 100vh;
+      }
+
+      /* --- Styling Komponen Kartu & Statistik --- */
+      .card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: var(--shadow-soft);
+        background: white;
+        margin-bottom: 24px;
+        transition: var(--transition);
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      }
+
+      .stat-card {
+        display: flex;
+        align-items: center;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Efek kilau (shine) pada hover kartu statistik */
+      .stat-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.5)
+        );
+        transform: skewX(-20deg) translateX(150%);
+        transition: 0.5s;
+      }
+
+      .stat-card:hover::after {
+        transform: skewX(-20deg) translateX(-150%);
+      }
+
+      .stat-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-right: 20px;
+        flex-shrink: 0;
+      }
+
+      /* --- Styling Tabel --- */
+      .table-responsive {
+        border-radius: 16px;
+      }
+
+      .table thead th {
+        background-color: #f8f9fa;
+        border-bottom: none;
+        color: var(--gray);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        padding: 15px 20px;
+        letter-spacing: 0.5px;
+      }
+
+      .table td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.95rem;
+      }
+
+      .table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: #fcfcfc;
+      }
+
+      /* --- Styling Tombol & UI Umum --- */
+      .btn-primary {
+        background: var(--gradient);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 24px;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        transition: var(--transition);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+        background: var(--gradient);
+        opacity: 0.95;
+      }
+
+      .avatar-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* --- Animasi Transisi Halaman (Slide Up) --- */
+      .page-section {
+        display: none;
+        animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .page-section.active {
+        display: block;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* --- Responsif Mobile (Layar Kecil) --- */
+      @media (max-width: 768px) {
+        .sidebar {
+          left: -100%; /* Sembunyikan sidebar di mobile */
+        }
+        .sidebar.show {
+          left: 0; /* Tampilkan jika class .show aktif */
+          box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+        }
+        .main-content {
+          margin-left: 0;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar d-flex flex-column" id="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <span class="logo-text">Dashboard</span>
+      </div>
+
+      <ul class="nav flex-column mb-auto">
+        <li class="nav-item">
+          <a href="#" class="nav-link active" data-target="dashboard">
+            <i class="fas fa-chart-pie"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-target="courses">
+            <i class="fas fa-graduation-cap"></i> Kursus & Kuis
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-target="users">
+            <i class="fas fa-users"></i> Pengguna
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-target="reports">
+            <i class="fas fa-file-alt"></i> Laporan Poin
+          </a>
+        </li>
+      </ul>
+
+      <div class="mt-auto pt-4 border-top">
+        <a href="#" class="nav-link text-danger fw-bold" id="logoutSidebar">
+          <i class="fas fa-sign-out-alt"></i> Keluar
+        </a>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="d-flex align-items-center">
+          <button
+            class="btn btn-light d-md-none me-3"
+            onclick="toggleSidebar()"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
+          <div>
+            <h3 class="fw-bold mb-0" id="pageTitle">Dashboard</h3>
+            <p class="text-muted small mb-0">Selasa, 21 November 2025</p>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <div
+            class="d-flex align-items-center bg-white p-2 pe-3 rounded-pill shadow-sm cursor-pointer dropdown-toggle"
+            data-bs-toggle="dropdown"
+            style="cursor: pointer"
+          >
+            <div class="avatar-circle me-2">AD</div>
+            <div class="d-none d-md-block">
+              <div class="fw-bold small lh-1">Administrator</div>
+              <small class="text-muted" style="font-size: 10px">Master</small>
+            </div>
+          </div>
+          <ul
+            class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2"
+            style="min-width: 200px; border-radius: 12px"
+          >
+            <li>
+              <a class="dropdown-item rounded-2" href="#"
+                ><i class="fas fa-user me-2 text-muted"></i> Profil</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item rounded-2" href="#"
+                ><i class="fas fa-cog me-2 text-muted"></i> Pengaturan</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item rounded-2 text-danger"
+                href="#"
+                id="logoutDropdown"
+                ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <section id="dashboard" class="page-section active">
+        <div class="row mb-4">
+          <div class="col-md-4 mb-3">
+            <div class="card stat-card">
+              <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                <i class="fas fa-user-friends"></i>
+              </div>
+              <div>
+                <h6
+                  class="text-muted mb-1 text-uppercase"
+                  style="font-size: 12px; letter-spacing: 1px"
+                >
+                  Total Pengguna
+                </h6>
+                <h2 class="fw-bold mb-0">1,250</h2>
+                <small class="text-success fw-bold"
+                  ><i class="fas fa-arrow-up"></i> 12% bulan ini</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="card stat-card">
+              <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                <i class="fas fa-book-open"></i>
+              </div>
+              <div>
+                <h6
+                  class="text-muted mb-1 text-uppercase"
+                  style="font-size: 12px; letter-spacing: 1px"
+                >
+                  Kursus Aktif
+                </h6>
+                <h2 class="fw-bold mb-0">35</h2>
+                <small class="text-success fw-bold"
+                  ><i class="fas fa-plus"></i> 2 Baru</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="card stat-card">
+              <div class="stat-icon bg-success bg-opacity-10 text-success">
+                <i class="fas fa-medal"></i>
+              </div>
+              <div>
+                <h6
+                  class="text-muted mb-1 text-uppercase"
+                  style="font-size: 12px; letter-spacing: 1px"
+                >
+                  Poin Diberikan
+                </h6>
+                <h2 class="fw-bold mb-0">150k</h2>
+                <small class="text-muted">Total akumulasi</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-lg-8 mb-4">
+            <div class="card p-4 h-100">
+              <div
+                class="d-flex justify-content-between align-items-center mb-4"
+              >
+                <h5 class="fw-bold mb-0">Statistik Belajar</h5>
+                <select class="form-select form-select-sm w-auto">
+                  <option>7 Hari Terakhir</option>
+                  <option>Bulan Ini</option>
+                </select>
+              </div>
+              <canvas id="learningChart" style="max-height: 300px"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="card p-4 h-100">
+              <h5 class="fw-bold mb-4">Aktivitas Terbaru</h5>
+              <div class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-start">
+                  <div
+                    class="avatar-circle me-3"
+                    style="
+                      width: 35px;
+                      height: 35px;
+                      font-size: 12px;
+                      background: #e9ecef;
+                      color: #666;
+                    "
+                  >
+                    BS
+                  </div>
+                  <div>
+                    <p class="mb-0 small">
+                      <span class="fw-bold">Budi Santoso</span> menyelesaikan
+                      kuis <span class="text-primary">CSS Modern</span>
+                    </p>
+                    <small class="text-muted" style="font-size: 11px"
+                      >10 menit lalu</small
+                    >
+                  </div>
+                </div>
+                <div class="d-flex align-items-start">
+                  <div
+                    class="avatar-circle me-3"
+                    style="
+                      width: 35px;
+                      height: 35px;
+                      font-size: 12px;
+                      background: #fff3cd;
+                      color: #856404;
+                    "
+                  >
+                    CD
+                  </div>
+                  <div>
+                    <p class="mb-0 small">
+                      <span class="fw-bold">Citra Dewi</span> naik ke
+                      <span class="fw-bold text-warning">Level 5</span>
+                    </p>
+                    <small class="text-muted" style="font-size: 11px"
+                      >1 jam lalu</small
+                    >
+                  </div>
+                </div>
+                <div class="d-flex align-items-start">
+                  <div
+                    class="avatar-circle me-3"
+                    style="
+                      width: 35px;
+                      height: 35px;
+                      font-size: 12px;
+                      background: #d1e7dd;
+                      color: #0f5132;
+                    "
+                  >
+                    EP
+                  </div>
+                  <div>
+                    <p class="mb-0 small">
+                      <span class="fw-bold">Eko Pramono</span> mendaftar akun
+                      baru
+                    </p>
+                    <small class="text-muted" style="font-size: 11px"
+                      >3 jam lalu</small
+                    >
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-light btn-sm w-100 mt-auto">
+                Lihat Semua
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="courses" class="page-section">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+          <div>
+            <h5 class="fw-bold">Daftar Materi</h5>
+            <p class="text-muted small mb-0">Kelola materi dan kuis di sini.</p>
+          </div>
+          <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addCourseModal"
+          >
+            <i class="fas fa-plus me-2"></i> Tambah Kursus
+          </button>
+        </div>
+
+        <div class="card p-0 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-4">ID</th>
+                  <th>Nama Kursus</th>
+                  <th>Modul</th>
+                  <th>Poin Max</th>
+                  <th>Status</th>
+                  <th class="text-end pe-4">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ps-4"><span class="text-muted">#C01</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="p-2 rounded me-3 bg-danger bg-opacity-10 text-danger"
+                      >
+                        <i class="fab fa-html5 fa-lg"></i>
+                      </div>
+                      <span class="fw-medium">Dasar-Dasar HTML</span>
+                    </div>
+                  </td>
+                  <td>5 Modul</td>
+                  <td>500 XP</td>
+                  <td>
+                    <span
+                      class="badge bg-success bg-opacity-10 text-success rounded-pill px-3"
+                      >Aktif</span
+                    >
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-light text-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light text-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ps-4"><span class="text-muted">#C02</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="p-2 rounded me-3 bg-primary bg-opacity-10 text-primary"
+                      >
+                        <i class="fab fa-css3-alt fa-lg"></i>
+                      </div>
+                      <span class="fw-medium">Penerapan CSS Modern</span>
+                    </div>
+                  </td>
+                  <td>4 Modul</td>
+                  <td>450 XP</td>
+                  <td>
+                    <span
+                      class="badge bg-success bg-opacity-10 text-success rounded-pill px-3"
+                      >Aktif</span
+                    >
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-light text-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light text-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ps-4"><span class="text-muted">#C03</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="p-2 rounded me-3 bg-warning bg-opacity-10 text-warning"
+                      >
+                        <i class="fab fa-js fa-lg"></i>
+                      </div>
+                      <span class="fw-medium">JavaScript Basic</span>
+                    </div>
+                  </td>
+                  <td>6 Modul</td>
+                  <td>600 XP</td>
+                  <td>
+                    <span
+                      class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3"
+                      >Draft</span
+                    >
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-light text-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light text-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="users" class="page-section">
+        <div class="row mb-4 align-items-end">
+          <div class="col-md-6">
+            <h5 class="fw-bold">Manajemen Pengguna</h5>
+            <p class="text-muted small mb-0">Total 1,250 pengguna terdaftar.</p>
+          </div>
+          <div
+            class="col-md-6 d-flex gap-2 justify-content-md-end mt-3 mt-md-0"
+          >
+            <input
+              type="text"
+              class="form-control w-auto"
+              id="searchUser"
+              placeholder="Cari nama/email..."
+              style="max-width: 200px"
+            />
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addUserModal"
+            >
+              <i class="fas fa-plus"></i> User
+            </button>
+          </div>
+        </div>
+
+        <div class="card p-0 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="userTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-4">User</th>
+                  <th>Role</th>
+                  <th>Level</th>
+                  <th>Total Poin</th>
+                  <th class="text-end pe-4">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="avatar-circle me-2"
+                        style="width: 36px; height: 36px; font-size: 12px"
+                      >
+                        AN
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark">Adi Nugroho</div>
+                        <small class="text-muted" style="font-size: 11px"
+                          >adi.nugroho@email.com</small
+                        >
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark border">Student</span>
+                  </td>
+                  <td><span class="fw-bold text-primary">Lvl 10</span></td>
+                  <td class="fw-bold text-success">5,200</td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-light">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="avatar-circle me-2"
+                        style="
+                          width: 36px;
+                          height: 36px;
+                          font-size: 12px;
+                          background: #6c757d;
+                        "
+                      >
+                        BS
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark">Budi Santoso</div>
+                        <small class="text-muted" style="font-size: 11px"
+                          >budi.s@email.com</small
+                        >
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark border">Student</span>
+                  </td>
+                  <td><span class="fw-bold text-primary">Lvl 9</span></td>
+                  <td class="fw-bold text-success">4,800</td>
+                  <td>
+                    <button class="btn btn-sm btn-light">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="avatar-circle me-2"
+                        style="
+                          width: 36px;
+                          height: 36px;
+                          font-size: 12px;
+                          background: var(--secondary);
+                        "
+                      >
+                        HA
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark">Hanif Abdul Azis</div>
+                        <small class="text-muted" style="font-size: 11px"
+                          >hanifabdulazis8@email.com</small
+                        >
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark border">Student</span>
+                  </td>
+                  <td><span class="fw-bold text-primary">Lvl 5</span></td>
+                  <td class="fw-bold text-success">1,250</td>
+                  <td>
+                    <button class="btn btn-sm btn-light">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="reports" class="page-section">
+        <div class="card p-4 mb-4 border-0 bg-white">
+          <h5 class="fw-bold mb-3">Filter Laporan</h5>
+          <div class="row g-3">
+            <div class="col-md-5">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"
+                  ><i class="fas fa-search text-muted"></i
+                ></span>
+                <input
+                  type="text"
+                  class="form-control bg-light border-start-0"
+                  id="searchReport"
+                  placeholder="Cari nama pengguna..."
+                />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <input type="date" class="form-control bg-light" />
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary w-100">
+                <i class="fas fa-filter me-2"></i> Terapkan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-0 overflow-hidden">
+          <div class="card-header bg-white p-4 border-bottom">
+            <h5 class="fw-bold mb-0">Log Poin Pengguna</h5>
+          </div>
+          <div class="table-responsive">
+            <table
+              class="table table-striped align-middle mb-0"
+              id="reportTable"
+            >
+              <thead>
+                <tr>
+                  <th class="ps-4">Tanggal</th>
+                  <th>Pengguna</th>
+                  <th>Deskripsi Aktivitas</th>
+                  <th class="text-end pe-4">Poin</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ps-4 text-muted small">15 Sep 2025</td>
+                  <td class="fw-medium">Budi Santoso</td>
+                  <td>
+                    <span
+                      class="badge bg-success bg-opacity-10 text-success me-2"
+                      >Kuis</span
+                    >
+                    HTML Lanjutan
+                  </td>
+                  <td class="text-end pe-4 text-success fw-bold">+100 XP</td>
+                </tr>
+                <tr>
+                  <td class="ps-4 text-muted small">14 Sep 2025</td>
+                  <td class="fw-medium">Citra Dewi</td>
+                  <td>
+                    <span
+                      class="badge bg-warning bg-opacity-10 text-warning me-2"
+                      >Reward</span
+                    >
+                    Leaderboard
+                  </td>
+                  <td class="text-end pe-4 text-success fw-bold">+50 XP</td>
+                </tr>
+                <tr>
+                  <td class="ps-4 text-muted small">14 Sep 2025</td>
+                  <td class="fw-medium">Adi Nugroho</td>
+                  <td>
+                    <span
+                      class="badge bg-primary bg-opacity-10 text-primary me-2"
+                      >Modul</span
+                    >
+                    CSS Intro
+                  </td>
+                  <td class="text-end pe-4 text-success fw-bold">+75 XP</td>
+                </tr>
+                <tr>
+                  <td class="ps-4 text-muted small">13 Sep 2025</td>
+                  <td class="fw-medium">Hanif Abdul Azis</td>
+                  <td>
+                    <span class="badge bg-info bg-opacity-10 text-info me-2"
+                      >Bonus</span
+                    >
+                    Level Up (Lvl 5)
+                  </td>
+                  <td class="text-end pe-4 text-primary fw-bold">+150 XP</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal fade" id="addCourseModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content border-0 shadow-lg"
+          style="border-radius: 16px"
+        >
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title fw-bold">Tambah Kursus Baru</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label class="form-label fw-medium">Nama Kursus</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Contoh: React JS Fundamental"
+                />
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label class="form-label fw-medium">Jumlah Modul</label>
+                  <input type="number" class="form-control" value="1" />
+                </div>
+                <div class="col-6">
+                  <label class="form-label fw-medium">Poin Max</label>
+                  <input type="number" class="form-control" value="100" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-medium">Deskripsi Singkat</label>
+                <textarea class="form-control" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-top-0">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+              Batal
+            </button>
+            <button type="button" class="btn btn-primary px-4">
+              Simpan Kursus
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content border-0 shadow-lg"
+          style="border-radius: 16px"
+        >
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title fw-bold">Tambah Pengguna</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label class="form-label fw-medium">Nama Lengkap</label>
+                <input type="text" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-medium">Email</label>
+                <input type="email" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-medium">Role</label>
+                <select class="form-select">
+                  <option>Student</option>
+                  <option>Instructor</option>
+                  <option>Admin</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-top-0">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+              Batal
+            </button>
+            <button type="button" class="btn btn-primary px-4">
+              Simpan User
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Fungsi Toggle Sidebar untuk Tampilan Mobile
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("show");
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Menangani perpindahan antar bagian (Dashboard, Courses, Users, dll) tanpa refresh
+        const links = document.querySelectorAll(".nav-link[data-target]");
+        const sections = document.querySelectorAll(".page-section");
+        const pageTitle = document.getElementById("pageTitle");
+
+        const titles = {
+          dashboard: "Dashboard Overview",
+          courses: "Manajemen Kursus",
+          users: "Daftar Pengguna",
+          reports: "Laporan Aktivitas & Poin",
+        };
+
+        links.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            // Cegah navigasi jika tombol logout diklik
+            if (this.id === "logoutSidebar") return;
+
+            e.preventDefault();
+
+            // Atur status aktif pada link sidebar
+            links.forEach((l) => l.classList.remove("active"));
+            this.classList.add("active");
+
+            // Sembunyikan semua section, tampilkan yang dipilih
+            sections.forEach((section) => section.classList.remove("active"));
+            const targetId = this.getAttribute("data-target");
+            document.getElementById(targetId).classList.add("active");
+
+            // Ubah judul halaman
+            pageTitle.textContent = titles[targetId];
+
+            // Tutup sidebar otomatis di mobile setelah klik
+            if (window.innerWidth < 768) {
+              document.getElementById("sidebar").classList.remove("show");
+            }
+          });
+        });
+
+        // Inisialisasi Chart.js (Grafik Belajar)
+        const ctx = document.getElementById("learningChart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+            datasets: [
+              {
+                label: "Kuis Diselesaikan",
+                data: [12, 19, 15, 25, 22, 30, 45],
+                borderColor: "#6c63ff",
+                backgroundColor: "rgba(108, 99, 255, 0.1)",
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              y: { beginAtZero: true, grid: { display: false } },
+              x: { grid: { display: false } },
+            },
+          },
+        });
+
+        // Fungsi Pencarian Tabel
+        function setupSearch(inputId, tableId) {
+          const input = document.getElementById(inputId);
+          const table = document.getElementById(tableId);
+
+          input.addEventListener("keyup", function () {
+            const filter = input.value.toLowerCase();
+            const rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+              let text = rows[i].textContent.toLowerCase();
+              // Tampilkan baris jika cocok dengan pencarian, sembunyikan jika tidak
+              rows[i].style.display = text.includes(filter) ? "" : "none";
+            }
+          });
+        }
+
+        // Aktifkan pencarian untuk tabel User dan Laporan
+        setupSearch("searchUser", "userTable");
+        setupSearch("searchReport", "reportTable");
+
+        // Logika Logout
+        const logoutSidebar = document.getElementById("logoutSidebar");
+        const logoutDropdown = document.getElementById("logoutDropdown");
+
+        function handleLogout(e) {
+          e.preventDefault();
+          if (confirm("Apakah Anda yakin ingin keluar?")) {
+            window.location.href = "login.html"; // Arahkan ke halaman login
+          }
+        }
+
+        if (logoutSidebar)
+          logoutSidebar.addEventListener("click", handleLogout);
+        if (logoutDropdown)
+          logoutDropdown.addEventListener("click", handleLogout);
+      });
+    </script>
+  </body>
+</html>
